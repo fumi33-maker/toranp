@@ -3,7 +3,7 @@ import random
 import time
 
 # --- 1. 画面設定 ---
-st.set_page_config(page_title="スマホ神経衰弱", layout="centered")
+st.set_page_config(page_title="神経衰弱", layout="centered")
 
 # --- 2. 強力なCSS設定 ---
 st.markdown('''
@@ -24,7 +24,7 @@ st.markdown('''
     </style>
 ''', unsafe_allow_html=True)
 
-st.title("🃏 スマホで神経衰弱")
+st.title("🃏 神経衰弱")
 
 # --- 3. ゲーム設定（12枚） ---
 TOTAL_CARDS = 12
@@ -82,3 +82,4 @@ if st.button("ゲームをリセット"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.rerun()
+

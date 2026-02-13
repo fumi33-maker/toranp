@@ -52,8 +52,9 @@ if len(st.session_state.selected) == 2:
         st.rerun()
 
 # --- リセットボタン ---
-if st.button("ゲームをやり直す"):
+if st.button("リベンジ"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.rerun()
+
 

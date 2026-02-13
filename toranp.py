@@ -3,68 +3,62 @@ import random
 import time
 
 # --- 1. 画面設定 ---
-st.set_page_config(page_title="神経衰弱", layout="centered")
+st.set_page_config(page_title="スマホ神経衰弱", layout="centered")
 
-# --- 2. 【最重要】スマホでも横並びを強制する魔法のCSS ---
+# --- 2. 強力なCSS設定 ---
 st.markdown('''
     <style>
-    /* 1. カラムの横並びをスマホでも維持する */
-    div[data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 0px !important; /* 隙間を調整 */
+    /* グリッド（網目）状に並べる設定 */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 絶対に3列 */
+        gap: 10px;
+        margin-bottom: 20px;
     }
-    /* 2. 各カラムの幅をスマホでも33%（3列）に固定する */
-    div[data-testid="column"] {
-        flex: 1 1 30% !important;
-        min-width: 30% !important;
-        max-width: 33% !important;
-    }
-    /* 3. ボタンの文字を大きく、高さを出して押しやすくする */
-    .stButton>button {
+    /* ボタンの見た目調整 */
+    button[kind="primary"], button[kind="secondary"] {
+        width: 100% !important;
         height: 80px !important;
         font-size: 24px !important;
-        margin-bottom: 5px !important;
     }
     </style>
 ''', unsafe_allow_html=True)
 
-# タイトル
-st.title("🃏 神経衰弱")
+st.title("🃏 スマホで神経衰弱")
 
-# --- 3. ゲーム設定（12枚：3列×4行） ---
-COLS = 3
-ROWS = 4
-TOTAL_CARDS = COLS * ROWS
+# --- 3. ゲーム設定（12枚） ---
+TOTAL_CARDS = 12
 
-# --- 4. データ管理（セッション状態） ---
 if 'cards' not in st.session_state:
-    # 1〜6の数字をペアで作成
-    nums = list(range(1, (TOTAL_CARDS // 2) + 1)) * 2
+    nums = list(range(1, 7)) * 2
     random.shuffle(nums)
     st.session_state.cards = nums
     st.session_state.opened = [False] * TOTAL_CARDS
     st.session_state.selected = []
     st.session_state.cleared = False
 
-# --- 5. ゲーム画面（カード配置） ---
-cols = st.columns(COLS)
+# --- 4. ゲーム画面（ここが重要！） ---
+# HTMLのコンテナを開始
+st.markdown('<div class="grid-container">', unsafe_allow_html=True)
+
+# 1枚ずつのボタンを配置
+# grid-containerの中では columns を使わなくても CSS で 3列になります
+# ただし Streamlit のボタンを HTML の中に入れるため、
+# 通常の st.columns を使いつつ、CSS で強制的に横並びを維持します
+cols = st.columns(3)
 
 for i in range(TOTAL_CARDS):
-    with cols[i % COLS]:
+    with cols[i % 3]:
         if st.session_state.opened[i]:
-            # めくられた後の数字
-            st.button(f"{st.session_state.cards[i]}", key=f"card_{i}", disabled=True, use_container_width=True)
+            st.button(f"{st.session_state.cards[i]}", key=f"c_{i}", disabled=True, use_container_width=True)
         else:
-            # 伏せられたカード
-            if st.button("❓", key=f"card_{i}", use_container_width=True):
+            if st.button("❓", key=f"c_{i}", use_container_width=True):
                 if len(st.session_state.selected) < 2:
                     st.session_state.opened[i] = True
                     st.session_state.selected.append(i)
                     st.rerun()
 
-# --- 6. 判定ロジック ---
+# --- 5. 判定ロジック ---
 if len(st.session_state.selected) == 2:
     i1, i2 = st.session_state.selected
     if st.session_state.cards[i1] == st.session_state.cards[i2]:
@@ -72,19 +66,18 @@ if len(st.session_state.selected) == 2:
         st.session_state.selected = []
     else:
         st.toast("ハズレ！")
-        time.sleep(0.6) # スマホでテンポ良く遊べるよう少し短縮
+        time.sleep(0.5)
         st.session_state.opened[i1] = False
         st.session_state.opened[i2] = False
         st.session_state.selected = []
         st.rerun()
 
-# --- 7. クリア演出 ---
+# --- 6. クリア演出 ---
 if all(st.session_state.opened) and not st.session_state.cleared:
     st.session_state.cleared = True
-    st.balloons() # 🎈 風船が飛ぶ
-    st.success("おめでとう！全部クリアしたよ！🎊")
+    st.balloons()
+    st.success("おめでとう！全部クリア！🎊")
 
-# --- 8. リセット ---
 if st.button("ゲームをリセット"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]

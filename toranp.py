@@ -4,8 +4,8 @@ import random
 import time
 
 # --- 画面設定 ---
-st.set_page_config(page_title="神経衰弱", layout="centered")
-st.title("🃏 神経衰弱")
+st.set_page_config(page_title="真剣衰弱", layout="centered")
+st.title("🃏 真剣衰弱")
 
 # --- データ管理（セッション） ---
 if 'cards' not in st.session_state:
@@ -50,5 +50,6 @@ if len(st.session_state.selected) == 2:
 if st.button("ゲームをやり直す"):
     del st.session_state.cards
     st.rerun()
+
 
 

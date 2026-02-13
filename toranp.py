@@ -1,4 +1,3 @@
-
 import streamlit as st
 import random
 import time
@@ -38,18 +37,22 @@ if len(st.session_state.selected) == 2:
     if st.session_state.cards[i1] == st.session_state.cards[i2]:
         st.toast("正解！🎉")
         st.session_state.selected = [] # クリア
+        
+        # --- ここで全クリア判定を追加 ---
+        if all(st.session_state.opened):
+            st.balloons()
+            st.success("おめでとう！すべてのペアを見つけました！")
+        # --------------------------
+        
     else:
-        st.toast("ハズレ！")
         time.sleep(1.0) # 1秒見せる
         st.session_state.opened[i1] = False
         st.session_state.opened[i2] = False
         st.session_state.selected = []
         st.rerun()
 
-# リセットボタン
+# --- リセットボタン ---
 if st.button("ゲームをやり直す"):
-    del st.session_state.cards
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
     st.rerun()
-
-
-

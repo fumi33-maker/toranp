@@ -4,7 +4,7 @@ import time
 
 # --- 画面設定 ---
 st.set_page_config(page_title="おそろいカード", layout="centered")
-st.title("🎰 CASINO CARD")
+st.title("🎰 おそろいカード")
 
 # --- データ管理（セッション） ---
 if 'cards' not in st.session_state:
@@ -56,6 +56,7 @@ if st.button("再チャレンジする！"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.rerun()
+
 
 
 
